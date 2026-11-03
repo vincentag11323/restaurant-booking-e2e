@@ -36,12 +36,14 @@ test("[T5] key screens match their recorded look", async ({ page }) => {
   }
 });
 
-test("[T7] an expired access token is refreshed for real", async ({ page }) => {
-  expectResult("The test API issues 8-second tokens; after waiting 9 s, opening My bookings still works (refresh + retry), no sign-in prompt");
+test("[T7] an ended session sends the guest to sign in on the next server call", async ({ page }) => {
+  expectResult("The test API issues 8-second sessions; after waiting 9 s the Reserve screen is still shown, and opening My bookings sends the guest to sign in");
   await uiSignIn(page, TEST_DATA.ayu);
-  await expect(page.getByRole("heading", { level: 1, name: "Reserve a table" })).toBeVisible();
+  const reserve = page.getByRole("heading", { level: 1, name: "Reserve a table" });
+  await expect(reserve).toBeVisible();
   await page.waitForTimeout(9_000);
-  await page.getByRole("link", { name: "Bookings", exact: true }).click();
-  await expect(page.getByText("Main Dining Hall · 4 guests")).toBeVisible();
+  await expect(reserve).toBeVisible();
   await expect(page).not.toHaveURL(/\/login$/);
+  await page.getByRole("link", { name: "Bookings", exact: true }).click();
+  await expect(page).toHaveURL(/\/login$/);
 });
