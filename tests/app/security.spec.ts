@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { URLS } from "../../playwright.config.ts";
-import { TEST_DATA, apiLogin, apiRegister, expectResult, inDays, newEmail } from "../support.ts";
+import { TEST_DATA, agentHeaders, apiLogin, apiRegister, expectResult, inDays, newEmail } from "../support.ts";
 
 const ERROR_LOG = new URL("../../../resortos-booking-api/logs/errors-test.log", import.meta.url).pathname;
 
@@ -28,8 +28,8 @@ test("[S2] a guest is kept out of the admin pages", async ({ page }) => {
 });
 
 test("[S4] the assistant's account is refused everywhere but its own routes", async ({ request }) => {
-  expectResult("403 on guest, profile and admin routes for the AGENT token");
-  const agent = await apiLogin(request, TEST_DATA.agent);
+  expectResult("403 on guest, profile and admin routes for the assistant's API key");
+  const agent = agentHeaders();
   for (const path of ["/api/reservations", "/api/me", "/api/admin/stats", "/api/admin/reservations?q=guests.test"]) {
     expect((await request.get(`${URLS.api}${path}`, { headers: agent })).status(), path).toBe(403);
   }

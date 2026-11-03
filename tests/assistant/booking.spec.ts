@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { URLS } from "../../playwright.config.ts";
-import { TEST_DATA, actualResult, apiLogin, apiRegister, expectResult, inDays, newEmail } from "../support.ts";
+import { TEST_DATA, actualResult, agentHeaders, apiLogin, apiRegister, expectResult, inDays, newEmail } from "../support.ts";
 import { REFUSAL, type Turn, chat } from "./chat.ts";
 
 const ONE_BOOKING = "This email already has a booking made with the assistant. To book a different time, sign up with this email in the app, cancel that booking there, then ask me again.";
@@ -68,7 +68,7 @@ test("[F2] a full sitting gets real alternatives", async ({ request }) => {
 test("[F14] an email that hasn't signed up can't get a second assistant booking", async ({ request }) => {
   expectResult(`Second request is answered with: "${ONE_BOOKING}"`);
   const email = newEmail("f14");
-  const agent = await apiLogin(request, TEST_DATA.agent);
+  const agent = agentHeaders();
   // First booking through the assistant's real API route (no AI call needed to set up).
   expect((await request.post(`${URLS.api}/api/agent/reservations`, { headers: agent, data: { email, branch: "BRANCH_1", sector: "MAIN_HALL", date: inDays(26), startTime: "11:00", partySize: 2 } })).status()).toBe(201);
   const res = await chat(request, email, [{ role: "user", content: `Book another table for 2 at Branch 1 Main Dining Hall on ${inDays(27)} at 13:30.` }]);
