@@ -2,7 +2,7 @@
 
 Real end-to-end tests for ResortOS Dining. **No mocking:** each run starts the real booking API on an in-memory TEST database (`npm run db-test`), the PWA's production build, and the booking assistant (with the real AI model), then drives them like a guest or admin would.
 
-Spec: [`../requirements/e2e_spec.md`](../requirements/e2e_spec.md). Scenarios: `../requirements/test_scenarios_app.md`, `../requirements/test_scenarios_assistant.md`.
+Spec: [`../requirements/E2E_SPEC.md`](../requirements/E2E_SPEC.md). Scenarios: `../requirements/TEST_SCENARIOS_APP.md`, `../requirements/TEST_SCENARIOS_ASSISTANT.md`.
 
 ## Run
 The sibling repos (`resortos-booking-api`, `-web`, `-agent`) must be installed, and the agent's `.env` must hold the Cent AI key.

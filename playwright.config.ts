@@ -1,4 +1,4 @@
-// Real end-to-end suite (requirements/e2e_spec.md). No mocking: every server below is the real app,
+// Real end-to-end suite (requirements/E2E_SPEC.md). No mocking: every server below is the real app,
 // started from its own repo on test ports, against the in-memory TEST database.
 import { defineConfig, devices } from "@playwright/test";
 
@@ -32,7 +32,7 @@ export default defineConfig({
         launchOptions: { slowMo: 250 },
       },
     },
-    // The same idempotent scenarios on Safari (WebKit) and Firefox (e2e_spec.md §6, T3).
+    // The same idempotent scenarios on Safari (WebKit) and Firefox (E2E_SPEC.md §6, T3).
     {
       name: "webkit",
       testDir: "tests/app",

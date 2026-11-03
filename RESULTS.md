@@ -2,7 +2,7 @@
 
 Run: 2026-11-03T19:26:02.478Z · overall: **passed** · 66 passed, 0 failed, 0 skipped
 
-Real stack, no mocking (requirements/e2e_spec.md). Scenario IDs refer to requirements/test_scenarios_app.md and test_scenarios_assistant.md.
+Real stack, no mocking (requirements/E2E_SPEC.md). Scenario IDs refer to requirements/TEST_SCENARIOS_APP.md and TEST_SCENARIOS_ASSISTANT.md.
 
 ## App (guest and admin in the browser)
 

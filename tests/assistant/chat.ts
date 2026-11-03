@@ -21,7 +21,7 @@ export interface ChatReply {
   booking?: { code: string; tableIds: string[] };
 }
 
-/** One real POST /chat. A 503 means Cent AI refused (busy or budget): the test is skipped, not failed (e2e_spec.md §5). */
+/** One real POST /chat. A 503 means Cent AI refused (busy or budget): the test is skipped, not failed (E2E_SPEC.md §5). */
 export async function chat(request: APIRequestContext, email: string, messages: Turn[], confirm?: Pending): Promise<ChatReply> {
   const res = await request.post(`${URLS.agent}/chat`, { data: { contact: { email }, messages, ...(confirm ? { confirm } : {}) } });
   const body = await res.json();

@@ -1,4 +1,4 @@
-// Load test (T6, e2e_spec.md §6) against the test API. The test database is PGlite, which runs one
+// Load test (T6, E2E_SPEC.md §6) against the test API. The test database is PGlite, which runs one
 // query at a time, so these numbers are a floor for this machine, not production capacity.
 import autocannon from "autocannon";
 import { expect, test } from "@playwright/test";

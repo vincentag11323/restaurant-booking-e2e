@@ -1,5 +1,5 @@
 // Writes RESULTS.md: one row per test with expected and actual result, and copies each video to
-// videos/<scenario-id>.webm (requirements/e2e_spec.md §4).
+// videos/<scenario-id>.webm (requirements/E2E_SPEC.md §4).
 import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
 import type { FullResult, Reporter, TestCase, TestResult } from "@playwright/test/reporter";
 
@@ -62,7 +62,7 @@ export default class ResultsReporter implements Reporter {
       "RESULTS.md",
       `# End-to-End Results\n\nRun: ${new Date().toISOString()} · overall: **${result.status}** · ` +
         `${count("passed")} passed, ${count("failed") + count("timedOut")} failed, ${count("skipped")} skipped\n\n` +
-        `Real stack, no mocking (requirements/e2e_spec.md). Scenario IDs refer to requirements/test_scenarios_app.md and test_scenarios_assistant.md.\n\n` +
+        `Real stack, no mocking (requirements/E2E_SPEC.md). Scenario IDs refer to requirements/TEST_SCENARIOS_APP.md and TEST_SCENARIOS_ASSISTANT.md.\n\n` +
         `## App (guest and admin in the browser)\n\n${header}\n${table("app")}\n\n` +
         `## Assistant (guest → AI → API)\n\n${header}\n${table("assistant")}\n\n` +
         (transcripts ? `## Assistant transcripts\n\n${transcripts}\n` : ""),
