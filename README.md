@@ -13,7 +13,11 @@ npx playwright install chromium   # first time only
 npm test                 # everything (assistant tests make real AI calls)
 npm run test:app         # browser scenarios only, no AI calls
 npm run test:assistant   # assistant scenarios only
+npm run test:browsers    # the idempotent scenarios on Safari (WebKit) and Firefox
+npm run load             # load test against the test API (autocannon)
 ```
+
+First time on a machine: `npx playwright install chromium webkit firefox`. Visual baselines live in `tests/visual/__screenshots__/`; after an intended UI change, refresh them with `npx playwright test -g T5 --update-snapshots`.
 
 Outputs:
 * **`RESULTS.md`**: every scenario with expected and actual result, time and video.

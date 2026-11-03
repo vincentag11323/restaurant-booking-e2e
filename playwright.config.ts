@@ -10,6 +10,9 @@ export const URLS = {
   agent: "http://localhost:4500",
 };
 
+/** Scenarios that can run once per browser without clashing (new guests, no fixed capacity). */
+const CROSS_BROWSER = /\[(A1|A5|A7|A10|B1|B6|M7|P1|W1|T7)\]/;
+
 export default defineConfig({
   testDir: "tests",
   // One shared test database: run serially so capacity checks stay predictable.
@@ -17,6 +20,7 @@ export default defineConfig({
   fullyParallel: false,
   timeout: 60_000,
   reporter: [["list"], ["./reporter/results-reporter.ts"]],
+  snapshotPathTemplate: "tests/visual/__screenshots__/{projectName}/{arg}{ext}",
   projects: [
     {
       name: "app",
@@ -28,7 +32,21 @@ export default defineConfig({
         launchOptions: { slowMo: 250 },
       },
     },
+    // The same idempotent scenarios on Safari (WebKit) and Firefox (e2e_spec.md §6, T3).
+    {
+      name: "webkit",
+      testDir: "tests/app",
+      grep: CROSS_BROWSER,
+      use: { ...devices["iPhone 14"], baseURL: URLS.web, video: "on", launchOptions: { slowMo: 250 } },
+    },
+    {
+      name: "firefox",
+      testDir: "tests/app",
+      grep: CROSS_BROWSER,
+      use: { ...devices["Desktop Firefox"], viewport: { width: 412, height: 915 }, baseURL: URLS.web, video: "on", launchOptions: { slowMo: 250 } },
+    },
     { name: "assistant", testDir: "tests/assistant", use: { baseURL: URLS.agent } },
+    { name: "load", testDir: "tests/load", timeout: 120_000 },
   ],
   webServer: [
     { command: "npm run db-test", cwd: repo("resortos-booking-api"), wait: { stdout: /TEST DATABASE/ }, timeout: 120_000, reuseExistingServer: false },

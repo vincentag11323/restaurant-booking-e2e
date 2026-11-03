@@ -6,13 +6,18 @@
     "test": "playwright test",
     "test:app": "playwright test --project=app",
     "test:assistant": "playwright test --project=assistant",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "load": "playwright test --project=load",
+    "test:browsers": "playwright test --project=webkit --project=firefox"
   },
   "license": "UNLICENSED",
   "type": "module",
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.64.1",
+    "@types/autocannon": "^7.12.7",
     "@types/node": "^26.6.6",
+    "autocannon": "^8.0.0",
     "typescript": "^7.0.2"
   },
   "private": true

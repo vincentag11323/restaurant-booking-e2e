@@ -21,19 +21,21 @@ export default class ResultsReporter implements Reporter {
   private rows: Row[] = [];
 
   onTestEnd(test: TestCase, result: TestResult) {
-    const id = /^\[([A-Z]+\d+)\]/.exec(test.title)?.[1] ?? "?";
+    const id = /^\[([A-Z]+\d*)\]/.exec(test.title)?.[1] ?? "?";
     const note = (type: string) => test.annotations.filter((a) => a.type === type).map((a) => a.description).join(" ");
     const video = result.attachments.find((a) => a.name === "video" && a.path);
     let videoFile = "";
     if (video?.path) {
       mkdirSync("videos", { recursive: true });
-      videoFile = `videos/${id}.webm`;
+      // One file per browser: the WebKit and Firefox runs repeat some Chromium scenarios.
+      const project = test.parent.project()?.name ?? "";
+      videoFile = `videos/${project === "app" ? "" : `${project}-`}${id}.webm`;
       copyFileSync(video.path, videoFile);
     }
     const firstError = result.errors[0]?.message?.split("\n").find((l) => l.trim()) ?? "";
     this.rows.push({
       id,
-      title: test.title.replace(/^\[[A-Z]+\d+\]\s*/, ""),
+      title: test.title.replace(/^\[[A-Z]+\d*\]\s*/, ""),
       project: test.parent.project()?.name ?? "",
       expected: note("expected"),
       actual: result.status === "passed" ? note("actual") || "As expected" : result.status === "skipped" ? `Skipped: ${note("skip") || "not run"}` : clean(firstError),
