@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type APIRequestContext, type Page, test } from "@playwright/test";
 import { URLS } from "../playwright.config.ts";
 
-/** Fake people loaded by `npm run db-test` (resortos-booking-api/prisma/seed-test.ts). */
+/** Fake people loaded by `npm run db-test` (resortos-booking-api/prisma/seedTest.ts). */
 export const TEST_DATA = {
   admin: { email: "admin@resortos.test", password: "Admin12345!" },
   /** The assistant has no password: it calls the API with X-Agent-Key (same value as the API and agent start:test scripts). */
