@@ -38,11 +38,19 @@ test("[S4] the assistant's account is refused everywhere but its own routes", as
 });
 
 test("[S9] failed requests are written to the error log without secrets", async ({ request }) => {
-  expectResult("A 404 and a failed login each add a JSON line to logs/errors-test.log; the password and query string aren't in it");
+  expectResult("A 404 and a failed login each add a [METHOD]-tagged JSON line to logs/errors-test.log, tag matching the request's method; the password and query string aren't in it");
   await request.get(`${URLS.api}/api/no-such-route?email=leak@guests.test`);
   await request.post(`${URLS.api}/api/auth/login`, { data: { email: "nobody@guests.test", password: "TopSecret999" } });
-  const lines = readFileSync(ERROR_LOG, "utf8").trim().split("\n").slice(-5).map((l) => JSON.parse(l));
-  expect(lines.some((l) => l.status === 404 && l.path === "/api/no-such-route")).toBe(true);
-  expect(lines.some((l) => l.status === 401 && l.path === "/api/auth/login")).toBe(true);
+  const lines = readFileSync(ERROR_LOG, "utf8")
+    .trim()
+    .split("\n")
+    .slice(-5)
+    .map((l) => {
+      const tagged = /^\[([A-Z]+)\] (.+)$/.exec(l);
+      if (!tagged) throw new Error(`line isn't [METHOD]-tagged: ${l}`);
+      return { method: tagged[1], ...JSON.parse(tagged[2]) };
+    });
+  expect(lines.some((l) => l.method === "GET" && l.status === 404 && l.path === "/api/no-such-route")).toBe(true);
+  expect(lines.some((l) => l.method === "POST" && l.status === 401 && l.path === "/api/auth/login")).toBe(true);
   expect(JSON.stringify(lines)).not.toMatch(/TopSecret999|leak@guests\.test/);
 });

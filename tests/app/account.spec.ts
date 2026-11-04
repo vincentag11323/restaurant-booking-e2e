@@ -61,3 +61,22 @@ test("[A11] signing up with an email the assistant booked for claims its booking
   actualResult(`Claimed; ${await page.getByText(/RSV-/).first().textContent()} listed`);
   await apiLogin(request, { email: TEST_DATA.citra.email, password: "Password123" });
 });
+
+test("[A14] signing out ends the session at once, even for a saved copy of the cookie", async ({ page, request }) => {
+  expectResult("A saved copy of the session cookie gets 200 on /api/users/me before sign-out, then 401 'Invalid or expired token' right after sign-out");
+  await uiSignIn(page, TEST_DATA.ayu);
+  const apiCookies = await page.context().cookies(URLS.api);
+  const webCookies = await page.context().cookies();
+  const session = apiCookies.find((c) => c.name === "session") ?? webCookies.find((c) => c.name === "session");
+  if (!session) throw new Error("no session cookie after signing in");
+  const savedCookie = { Cookie: `session=${session.value}` };
+  expect((await request.get(`${URLS.api}/api/users/me`, { headers: savedCookie })).status()).toBe(200);
+  await page.getByRole("link", { name: "Profile" }).click();
+  await page.getByRole("button", { name: "Sign out" }).click();
+  await expect(page).toHaveURL(/\/login$/);
+  const after = await request.get(`${URLS.api}/api/users/me`, { headers: savedCookie });
+  const body = await after.json();
+  actualResult(`${after.status()} ${JSON.stringify(body)}`);
+  expect(after.status()).toBe(401);
+  expect(body).toEqual({ message: "Invalid or expired token" });
+});
