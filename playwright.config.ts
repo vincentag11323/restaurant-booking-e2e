@@ -19,7 +19,7 @@ export default defineConfig({
   workers: 1,
   fullyParallel: false,
   timeout: 60_000,
-  reporter: [["list"], ["./reporter/results-reporter.ts"]],
+  reporter: [["list"], ["./reporter/resultsReporter.ts"]],
   snapshotPathTemplate: "tests/visual/__screenshots__/{projectName}/{arg}{ext}",
   projects: [
     {
