@@ -14,7 +14,7 @@ test("[C1] a guest books in one message, confirms, and admins see it as an assis
   const done = await chat(request, email, [...ask, { role: "assistant", content: first.reply }, { role: "user", content: "Yes, book it." }], first.pendingBooking);
   expect(done.booking?.code).toMatch(/^RSV-[A-Z0-9]{6}$/);
   const admin = await apiLogin(request, TEST_DATA.admin);
-  const log = await (await request.get(`${URLS.api}/api/admin/reservations?q=${email}`, { headers: admin })).json();
+  const log = await (await request.get(`${URLS.api}/api/admins/reservations?q=${email}`, { headers: admin })).json();
   expect(log.items[0]).toMatchObject({ code: done.booking?.code, source: "AGENT" });
   actualResult(`Booked ${done.booking?.code}; admin log source=${log.items[0].source}`);
 });
@@ -57,7 +57,7 @@ test("[F2] a full sitting gets real alternatives", async ({ request }) => {
   expectResult("All 4 VIP rooms at Branch 2 19:30 are taken first; the assistant offers alternatives, none of them that sitting");
   const filler = await apiRegister(request, newEmail("f2-filler"));
   const date = inDays(25);
-  expect((await request.post(`${URLS.api}/api/reservations`, { headers: filler, data: { branch: "BRANCH_2", sector: "VIP_WING", date, startTime: "19:30", partySize: 50 } })).status()).toBe(201);
+  expect((await request.post(`${URLS.api}/api/users/reservations`, { headers: filler, data: { branch: "BRANCH_2", sector: "VIP_WING", date, startTime: "19:30", partySize: 50 } })).status()).toBe(201);
   const res = await chat(request, newEmail("f2"), [{ role: "user", content: `A private VIP room for 10 people at Branch 2 on ${date} at 19:30, please.` }]);
   expect(res.pendingBooking).toBeUndefined();
   expect(res.alternatives?.length ?? 0).toBeGreaterThan(0);
@@ -70,7 +70,7 @@ test("[F14] an email that hasn't signed up can't get a second assistant booking"
   const email = newEmail("f14");
   const agent = agentHeaders();
   // First booking through the assistant's real API route (no AI call needed to set up).
-  expect((await request.post(`${URLS.api}/api/agent/reservations`, { headers: agent, data: { email, branch: "BRANCH_1", sector: "MAIN_HALL", date: inDays(26), startTime: "11:00", partySize: 2 } })).status()).toBe(201);
+  expect((await request.post(`${URLS.api}/api/agents/reservations`, { headers: agent, data: { email, branch: "BRANCH_1", sector: "MAIN_HALL", date: inDays(26), startTime: "11:00", partySize: 2 } })).status()).toBe(201);
   const res = await chat(request, email, [{ role: "user", content: `Book another table for 2 at Branch 1 Main Dining Hall on ${inDays(27)} at 13:30.` }]);
   expect(res.pendingBooking).toBeUndefined();
   expect(res.reply).toContain("sign up with this email in the app, cancel that booking there");

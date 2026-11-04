@@ -9,8 +9,8 @@ test("[S1] a guest can't open another guest's booking", async ({ request }) => {
   expectResult("404 for read, reschedule and cancel; the owner's booking is unchanged");
   const owner = await apiRegister(request, newEmail("s1-owner"));
   const intruder = await apiRegister(request, newEmail("s1-intruder"));
-  const booking = await (await request.post(`${URLS.api}/api/reservations`, { headers: owner, data: { branch: "BRANCH_1", sector: "MAIN_HALL", date: inDays(14), startTime: "11:00", partySize: 2 } })).json();
-  const url = `${URLS.api}/api/reservations/${booking.id}`;
+  const booking = await (await request.post(`${URLS.api}/api/users/reservations`, { headers: owner, data: { branch: "BRANCH_1", sector: "MAIN_HALL", date: inDays(14), startTime: "11:00", partySize: 2 } })).json();
+  const url = `${URLS.api}/api/users/reservations/${booking.id}`;
   expect((await request.get(url, { headers: intruder })).status()).toBe(404);
   expect((await request.patch(url, { headers: intruder, data: { date: inDays(15), startTime: "11:00" } })).status()).toBe(404);
   expect((await request.delete(url, { headers: intruder })).status()).toBe(404);
@@ -28,10 +28,12 @@ test("[S2] a guest is kept out of the admin pages", async ({ page }) => {
 });
 
 test("[S4] the assistant's account is refused everywhere but its own routes", async ({ request }) => {
-  expectResult("403 on guest, profile and admin routes for the assistant's API key");
+  expectResult("401 'Authentication required' on guest, profile and admin routes for the assistant's API key (the key isn't read there)");
   const agent = agentHeaders();
-  for (const path of ["/api/reservations", "/api/me", "/api/admin/stats", "/api/admin/reservations?q=guests.test"]) {
-    expect((await request.get(`${URLS.api}${path}`, { headers: agent })).status(), path).toBe(403);
+  for (const path of ["/api/users/reservations", "/api/users/me", "/api/admins/stats", "/api/admins/reservations?q=guests.test"]) {
+    const res = await request.get(`${URLS.api}${path}`, { headers: agent });
+    expect(res.status(), path).toBe(401);
+    expect(await res.json(), path).toEqual({ message: "Authentication required" });
   }
 });
 

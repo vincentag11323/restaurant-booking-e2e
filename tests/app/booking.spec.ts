@@ -41,7 +41,7 @@ test("[B2] a VIP booking for 14 joins 2 private rooms", async ({ page }) => {
 test("[B3] a fully booked sitting can't be picked", async ({ page, request }) => {
   expectResult("After 4 VIP rooms are taken at 11:00, that sitting shows 'Fully booked' and is disabled");
   const other = await apiRegister(request, newEmail("b3-filler"));
-  const fill = await request.post(`${URLS.api}/api/reservations`, { headers: other, data: { branch: "BRANCH_1", sector: "VIP_WING", date: inDays(11), startTime: "11:00", partySize: 50 } });
+  const fill = await request.post(`${URLS.api}/api/users/reservations`, { headers: other, data: { branch: "BRANCH_1", sector: "VIP_WING", date: inDays(11), startTime: "11:00", partySize: 50 } });
   expect(fill.status()).toBe(201);
   await signUpAndBook(page, newEmail("b3"));
   await page.getByRole("radio", { name: "VIP Private Dining" }).check();

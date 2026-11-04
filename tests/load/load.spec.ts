@@ -15,8 +15,8 @@ async function hit(name: string, options: autocannon.Options) {
 test("[T6] the API stays up and error-free under concurrent reads and sign-ins", async () => {
   expectResult("No errors or timeouts; reads stay 2xx with 50 concurrent connections; sign-ins stay 2xx with 10");
   const results = [
-    await hit("availability x50", { url: `${URLS.api}/api/availability?branch=BRANCH_1&sector=MAIN_HALL&date=${inDays(30)}`, connections: 50 }),
-    await hit("menu x50", { url: `${URLS.api}/api/menu`, connections: 50 }),
+    await hit("availability x50", { url: `${URLS.api}/api/public/availabilities?branch=BRANCH_1&sector=MAIN_HALL&date=${inDays(30)}`, connections: 50 }),
+    await hit("menu x50", { url: `${URLS.api}/api/public/menus`, connections: 50 }),
     await hit("sign-in x10", {
       url: `${URLS.api}/api/auth/login`,
       connections: 10,

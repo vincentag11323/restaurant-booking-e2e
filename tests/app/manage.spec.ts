@@ -6,7 +6,7 @@ import { TEST_DATA, apiRegister, expectResult, inDays, newEmail, uiSignIn } from
 async function guestWithBooking(request: import("@playwright/test").APIRequestContext, days: number) {
   const email = newEmail("m");
   const auth = await apiRegister(request, email);
-  const res = await request.post(`${URLS.api}/api/reservations`, { headers: auth, data: { branch: "BRANCH_1", sector: "MAIN_HALL", date: inDays(days), startTime: "19:30", partySize: 4 } });
+  const res = await request.post(`${URLS.api}/api/users/reservations`, { headers: auth, data: { branch: "BRANCH_1", sector: "MAIN_HALL", date: inDays(days), startTime: "19:30", partySize: 4 } });
   expect(res.status()).toBe(201);
   return { email, code: (await res.json()).code as string };
 }
@@ -45,7 +45,7 @@ test("[M4] a guest cancels a booking after confirming", async ({ page, request }
   await page.getByRole("dialog", { name: "Release this table?" }).getByRole("button", { name: "Release table" }).click();
   await expect(page.getByText("Cancelled")).toBeVisible();
   await expect(page.getByRole("button", { name: `Release booking ${code}` })).toBeHidden();
-  const slots = await (await request.get(`${URLS.api}/api/availability?branch=BRANCH_1&sector=MAIN_HALL&date=${inDays(13)}`)).json();
+  const slots = await (await request.get(`${URLS.api}/api/public/availabilities?branch=BRANCH_1&sector=MAIN_HALL&date=${inDays(13)}`)).json();
   expect(slots.find((s: { startTime: string }) => s.startTime === "19:30").freeUnits).toBe(50);
 });
 

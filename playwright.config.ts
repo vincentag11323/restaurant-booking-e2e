@@ -50,8 +50,8 @@ export default defineConfig({
   ],
   webServer: [
     { command: "npm run db-test", cwd: repo("resortos-booking-api"), wait: { stdout: /TEST DATABASE/ }, timeout: 120_000, reuseExistingServer: false },
-    { command: "npm run start:test", cwd: repo("resortos-booking-api"), url: `${URLS.api}/api/health`, timeout: 120_000, reuseExistingServer: false },
+    { command: "npm run start:test", cwd: repo("resortos-booking-api"), url: `${URLS.api}/api/public/health`, timeout: 120_000, reuseExistingServer: false },
     { command: "npm run preview:test", cwd: repo("resortos-booking-web"), url: URLS.web, timeout: 120_000, reuseExistingServer: false },
-    { command: "npm run start:test", cwd: repo("resortos-booking-agent"), url: `${URLS.agent}/health`, timeout: 120_000, reuseExistingServer: false },
+    { command: "npm run start:test", cwd: repo("resortos-booking-agent"), url: `${URLS.agent}/agents/public/health`, timeout: 120_000, reuseExistingServer: false },
   ],
 });

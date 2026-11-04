@@ -28,7 +28,7 @@ test("[X10] prompt injection doesn't change the assistant's role or reveal other
 
 test("[X2] an edited confirmation is refused without booking", async ({ request }) => {
   expectResult("400 'Those booking details changed or expired. Please ask again.' (no AI call)");
-  const res = await request.post(`${URLS.agent}/chat`, {
+  const res = await request.post(`${URLS.agent}/agents/users/chats`, {
     data: {
       contact: { email: newEmail("x2") },
       messages: [{ role: "user", content: "yes" }],
@@ -41,7 +41,7 @@ test("[X2] an edited confirmation is refused without booking", async ({ request 
 
 test("[X9] oversized or malformed chats are rejected", async ({ request }) => {
   expectResult("400 for 31 messages, a 2,001-character message and a bad email (no AI calls)");
-  const post = (data: unknown) => request.post(`${URLS.agent}/chat`, { data });
+  const post = (data: unknown) => request.post(`${URLS.agent}/agents/users/chats`, { data });
   expect((await post({ contact: { email: newEmail("x9") }, messages: Array.from({ length: 31 }, () => ({ role: "user", content: "hi" })) })).status()).toBe(400);
   expect((await post({ contact: { email: newEmail("x9") }, messages: [{ role: "user", content: "x".repeat(2001) }] })).status()).toBe(400);
   expect((await post({ contact: { email: "not-an-email" }, messages: [{ role: "user", content: "hi" }] })).status()).toBe(400);
